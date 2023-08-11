@@ -13,6 +13,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurpleAccent,
         
+        
         title: Text("Do-It"),
       ),
     );
