@@ -13,7 +13,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Color.fromARGB(255, 58, 31, 141),
         
         title: Text("Authentication",),
       ),
