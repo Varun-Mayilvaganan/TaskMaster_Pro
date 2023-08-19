@@ -56,10 +56,16 @@ class _AuthFormState extends State<AuthForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.grey.shade100,
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: ListView(
         children: [
+          Container(
+             margin: EdgeInsets.all(30),
+            height: 150,
+            child: Image.asset('assets/images/todoauths.png'),
+          ),
           Container(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
@@ -181,7 +187,7 @@ class _AuthFormState extends State<AuthForm> {
                   isLoginPage= !isLoginPage;
                 });
               },
-              child: isLoginPage?Text('Not a Member'): Text('Already a Member')
+              child: isLoginPage?Text('Create a new one!',style:GoogleFonts.roboto(fontSize: 18,color: Colors.black)): Text('Already a User?',style:GoogleFonts.roboto(fontSize: 18,color: Colors.black))
               ),
               ),
         ],
