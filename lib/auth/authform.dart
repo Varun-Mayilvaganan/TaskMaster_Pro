@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+
 
 class AuthForm extends StatefulWidget {
   const AuthForm({Key? key}) : super(key: key);
@@ -36,10 +37,8 @@ class _AuthFormState extends State<AuthForm> {
         final authResult = await auth.createUserWithEmailAndPassword(email: email, password: password);
         String uid = authResult.user!.uid;
 
-        // Initialize Firestore (make sure you have done this in your main.dart)
         FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-        // Use _username and _email instead of username and email
         await firestore.collection('users').doc(uid).set({
           'username': _username,
           'email': _email,
@@ -50,148 +49,152 @@ class _AuthFormState extends State<AuthForm> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey.shade100,
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: ListView(
-        children: [
-          Container(
-             margin: EdgeInsets.all(30),
-            height: 150,
-            child: Image.asset('assets/images/todoauths.png'),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color.fromARGB(255, 202, 188, 240), Color.fromRGBO(133, 67, 255, 1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          Container(
+        ),
+        child: Center(
+          child: Card(
+            elevation: 10,
+            margin: const EdgeInsets.all(20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Form(
-                key: _formkey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (!isLoginPage)
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formkey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(20),
+                        height: 120,
+                        child: Image.asset('assets/images/todoauths.png'),
+                      ),
+                      if (!isLoginPage)
+                        TextFormField(
+                          keyboardType: TextInputType.text,
+                          key: const ValueKey("username"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Incorrect UserName';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            _username = value!;
+                          },
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(),
+                            ),
+                            labelText: "Username",
+                            prefixIcon: Icon(Icons.person),
+                          ),
+                        ),
+                      SizedBox(height: 20),
                       TextFormField(
-                        keyboardType: TextInputType.text,
-                        key: const ValueKey("username"),
+                        keyboardType: TextInputType.emailAddress,
+                        key: const ValueKey("email"),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Incorrect UserName';
+                          if (value == null || value.isEmpty || !value.contains('@')) {
+                            return 'Incorrect Email';
                           }
                           return null;
                         },
                         onSaved: (value) {
-                          _username = value!;
+                          _email = value!;
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide(),
                           ),
-                          labelText: "Enter Username",
-                          labelStyle: GoogleFonts.roboto(),
+                          labelText: "Email",
+                          prefixIcon: Icon(Icons.email),
                         ),
                       ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      key: const ValueKey("email"),
-                      validator: (value) {
-                        if (value == null || value.isEmpty || !value.contains('@')) {
-                          return 'Incorrect Email';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _email = value!;
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(),
-                        ),
-                        labelText: "Enter Email",
-                        labelStyle: GoogleFonts.roboto(),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      obscureText: true,
-                      keyboardType: TextInputType.text,
-                      key: const ValueKey("password"),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Incorrect Password';
-                        }else{
-                        return null;}
-                      },
-                      onSaved: (value) {
-                        _password = value!;
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(),
-                        ),
-                        labelText: "Enter Password",
-                        labelStyle: GoogleFonts.roboto(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.deepPurple),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        obscureText: true,
+                        keyboardType: TextInputType.text,
+                        key: const ValueKey("password"),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Incorrect Password';
+                          } else {
+                            return null;
+                          }
+                        },
+                        onSaved: (value) {
+                          _password = value!;
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(),
+                          ),
+                          labelText: "Password",
+                          prefixIcon: Icon(Icons.lock),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.deepPurple),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurpleAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          primary: Colors.deepPurpleAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: startauthentication,
+                        child: Text(
+                          isLoginPage ? 'Log In' : 'Sign Up',
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        startauthentication();
-                        // Handle form submission here
-                        if (_formkey.currentState!.validate()) {
-                          _formkey.currentState!.save();
-                          // Now you can use _username, _email, and _password for further processing
-                        }
-                      },
-                      child: isLoginPage
-                          ? Text(
-                              'LogIn',
-                              style: GoogleFonts.roboto(
-                                fontSize: 16,
-                              ),
-                            )
-                          : Text(
-                              'SignUp',
-                              style: GoogleFonts.roboto(
-                                fontSize: 16,
-                              ),
-                            ),
-                    ),
-                  ],
+                      SizedBox(height: 10),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isLoginPage = !isLoginPage;
+                          });
+                        },
+                        child: Text(
+                          isLoginPage ? 'Create a new account' : 'Already have an account? Log In',
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 10),
-          Container(
-            child: TextButton(
-              onPressed: () {
-                setState(() {
-                  isLoginPage= !isLoginPage;
-                });
-              },
-              child: isLoginPage?Text('Create a new one!',style:GoogleFonts.roboto(fontSize: 18,color: Colors.black)): Text('Already a User?',style:GoogleFonts.roboto(fontSize: 18,color: Colors.black))
-              ),
-              ),
-        ],
+        ),
       ),
     );
   }
 }
+
+

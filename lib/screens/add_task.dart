@@ -87,6 +87,7 @@ class _AddTaskState extends State<AddTask> {
                   ),
               onPressed: () {
                 addtasktofirebase();
+                Navigator.pop(context);
               }, 
                 child: Text('Add Task',style: GoogleFonts.roboto(fontSize: 18),),
                 ),
