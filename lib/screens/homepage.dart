@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:todo_firebase/screens/add_task.dart';
+
+import 'edit_task.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -58,17 +61,18 @@ class _HomeState extends State<Home> {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return Center(child: CircularProgressIndicator());
     } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-      return Center(child: Text('No tasks available.'));
+      return Center(child: Lottie.asset('assets/notasks.json'));
     } else {
       final docs = snapshot.data!.docs;
       return ListView.builder(
         itemCount: docs.length,
         itemBuilder: (context, index) {
+          // Inside the ListView.builder
           return Container(
             margin: EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(10)
+              borderRadius: BorderRadius.circular(10),
             ),
             height: 90,
             child: Row(
@@ -80,21 +84,50 @@ class _HomeState extends State<Home> {
                   children: [
                     Container(
                       margin: EdgeInsets.only(left: 20),
-                      child: Text(docs[index]['title'],style: GoogleFonts.roboto(fontSize: 18),)),
+                      child: Text(
+                        docs[index]['title'],
+                        style: GoogleFonts.roboto(fontSize: 18),
+                      ),
+                    ),
                   ],
                 ),
-                Container(
-                  child: IconButton(
-                    icon: Icon(Icons.delete,
-                    color: Colors.redAccent),
-                    onPressed: () async{
-                      await FirebaseFirestore.instance.collection('tasks').doc(uid).collection('mytasks').doc(docs[index]['time']).delete();
-            
-                    },
-                  ),),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.redAccent), // Edit icon
+                      onPressed: () {
+                        // Navigate to the edit screen and pass necessary data
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditTaskScreen(
+                              uid: uid,
+                              taskId: docs[index]['time'],
+                              currentTitle: docs[index]['title'],
+                              currentDescription: docs[index]['description'],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.redAccent),
+                      onPressed: () async {
+                        await FirebaseFirestore.instance
+                            .collection('tasks')
+                            .doc(uid)
+                            .collection('mytasks')
+                            .doc(docs[index]['time'])
+                            .delete();
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           );
+
+
         },
       );
     }
