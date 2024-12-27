@@ -90,13 +90,23 @@
 1. **Login/Signup**  
    Users are prompted to log in or sign up using their email and password. Once authenticated, they are redirected to the **Home** screen. If not authenticated, they remain on the **AuthScreen**.
 
-2. **Home Screen**  
+<img src="assets/images/Sign_Up.jpeg" alt="Sign-up" height="600" width="300"/>
+
+<img src="assets/images/Already_Login.jpeg" alt="Login" height="600" width="300"/>
+
+<img src="assets/images/Enter_Credentials.jpeg" alt="credentials" height="600" width="300"/>
+
+3. **Home Screen**  
    Upon successful login, users are directed to the **Home** screen, where they can view their tasks. From here, users can add, edit, or delete tasks.
 
-3. **Task Management**  
-   Users can create tasks by entering a title, description, and due date. These tasks are stored in Firestore and synced across devices in real-time.
+<img src="assets/images/After_Login.jpeg" alt="HomePage" height="600" width="300"/>
 
-4. **Logout**  
+5. **Task Management**  
+   Users can create tasks by entering a title, description, and due date. These tasks are stored in Firestore and synced across devices in real-time.
+<img src="assets/images/Task_List.jpeg" alt="Tasks" height="600" width="300"/>
+<img src="assets/images/Edit_Task.jpeg" alt="Edit task" height="600" width="300"/>
+
+7. **Logout**  
    Users can log out from the app using the logout button, which triggers Firebase Authentication's sign-out process.
 
 ---
